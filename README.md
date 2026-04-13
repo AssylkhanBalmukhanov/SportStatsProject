@@ -14,3 +14,7 @@ Player Clustering: Uses K-Means clustering to group players by statistical simil
 Team Passing Networks: Applies graph theory to visualize pass frequency, central hubs, and overall possession structure.
 
 Computer Vision (Experimental): Basic player and ball tracking from broadcast footage using OpenCV.
+
+## ML Features
+
+Ability to apply common statistics to uploaded football videos.
