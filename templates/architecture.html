@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Architecture{% endblock %}
+{% block content %}
+<section class="content-stack">
+  <div>
+    <p class="eyebrow">System design</p>
+    <h1>Architecture and Responsibilities</h1>
+  </div>
+
+  <div class="diagram">
+    <div>Flask routes</div>
+    <span></span>
+    <div>Analytics services</div>
+    <span></span>
+    <div>Templates + API JSON</div>
+  </div>
+
+  <section class="feature-grid">
+    <article class="feature-card">
+      <span class="feature-kicker">Web layer</span>
+      <h2>sportstats.create_app</h2>
+      <p>Owns routes, request validation, file uploads, logging, and rendering.</p>
+    </article>
+    <article class="feature-card">
+      <span class="feature-kicker">Stat models</span>
+      <h2>prediction.py</h2>
+      <p>Contains Poisson expected goals and Monte Carlo simulation logic.</p>
+    </article>
+    <article class="feature-card">
+      <span class="feature-kicker">Event graphics</span>
+      <h2>passing_network.py</h2>
+      <p>Aggregates pass events into graph nodes and weighted directed links.</p>
+    </article>
+    <article class="feature-card">
+      <span class="feature-kicker">Vision</span>
+      <h2>yolo.py</h2>
+      <p>Lazily imports YOLO/OpenCV so the web app remains runnable without heavy ML dependencies.</p>
+    </article>
+  </section>
+</section>
+{% endblock %}

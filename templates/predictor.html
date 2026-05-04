@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Match Predictor{% endblock %}
+{% block content %}
+<section class="split-layout">
+  <div>
+    <p class="eyebrow">Statistical model</p>
+    <h1>Match Predictor</h1>
+    <form class="panel form-grid" method="post" action="{{ url_for('predictor_submit') }}">
+      <label>
+        Home team
+        <input name="home_name" value="{{ request.form.get('home_name', 'Aris FC') }}">
+      </label>
+      <label>
+        Away team
+        <input name="away_name" value="{{ request.form.get('away_name', 'APOEL FC') }}">
+      </label>
+      <label>
+        Home Elo
+        <input type="number" name="home_elo" value="{{ request.form.get('home_elo', 1540) }}">
+      </label>
+      <label>
+        Away Elo
+        <input type="number" name="away_elo" value="{{ request.form.get('away_elo', 1490) }}">
+      </label>
+      <label>
+        Home attack
+        <input type="number" step="0.01" name="home_attack" value="{{ request.form.get('home_attack', 1.12) }}">
+      </label>
+      <label>
+        Home defense
+        <input type="number" step="0.01" name="home_defense" value="{{ request.form.get('home_defense', 0.94) }}">
+      </label>
+      <label>
+        Away attack
+        <input type="number" step="0.01" name="away_attack" value="{{ request.form.get('away_attack', 1.04) }}">
+      </label>
+      <label>
+        Away defense
+        <input type="number" step="0.01" name="away_defense" value="{{ request.form.get('away_defense', 1.02) }}">
+      </label>
+      <label>
+        Simulations
+        <input type="number" name="simulations" min="1000" max="100000" value="{{ request.form.get('simulations', 20000) }}">
+      </label>
+      <button class="primary-action" type="submit">Run prediction</button>
+    </form>
+  </div>
+
+  <aside class="panel result-panel">
+    {% if result %}
+      <p class="eyebrow">{{ result.home_team }} vs {{ result.away_team }}</p>
+      <h2>{{ result.expected_goals.home }} - {{ result.expected_goals.away }} xG</h2>
+      <div class="metric-row">
+        <span>Home win</span>
+        <strong>{{ (result.probabilities.home_win * 100)|round(1) }}%</strong>
+      </div>
+      <div class="metric-row">
+        <span>Draw</span>
+        <strong>{{ (result.probabilities.draw * 100)|round(1) }}%</strong>
+      </div>
+      <div class="metric-row">
+        <span>Away win</span>
+        <strong>{{ (result.probabilities.away_win * 100)|round(1) }}%</strong>
+      </div>
+      <h3>Most likely scores</h3>
+      <ol class="score-list">
+        {% for score in result.most_likely_scores %}
+          <li><span>{{ score.score }}</span><strong>{{ (score.probability * 100)|round(1) }}%</strong></li>
+        {% endfor %}
+      </ol>
+    {% else %}
+      <p class="empty-state">Submit the form to generate a Monte Carlo forecast.</p>
+    {% endif %}
+  </aside>
+</section>
+{% endblock %}

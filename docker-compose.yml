@@ -1,0 +1,14 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      SECRET_KEY: ${SECRET_KEY:-dev-only-change-me}
+      YOLO_MODEL_PATH: ${YOLO_MODEL_PATH:-}
+      VISION_MAX_FRAMES: ${VISION_MAX_FRAMES:-120}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    volumes:
+      - ./static/uploads:/app/static/uploads
+      - ./static/outputs:/app/static/outputs
+      - ./models:/app/models:ro
