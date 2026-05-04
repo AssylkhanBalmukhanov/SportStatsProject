@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}SportStats Dashboard{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">Football analytics project</p>
+    <h1>Match prediction, passing structure, and computer vision in one Flask app.</h1>
+    <p class="lead">
+      A demoable project shell for two workstreams: statistical match models and YOLO/OpenCV video analysis.
+    </p>
+  </div>
+  <div class="pitch-preview" aria-label="Football pitch analytics preview">
+    <span class="player p1"></span>
+    <span class="player p2"></span>
+    <span class="player p3"></span>
+    <span class="player p4"></span>
+    <span class="ball"></span>
+  </div>
+</section>
+
+<section class="feature-grid" aria-label="Project features">
+  <a class="feature-card" href="{{ url_for('predictor') }}">
+    <span class="feature-kicker">Use case 1</span>
+    <h2>Match Predictor</h2>
+    <p>Poisson expected goals plus Monte Carlo simulations, ready to extend with Elo and richer datasets.</p>
+  </a>
+  <a class="feature-card" href="{{ url_for('passing_network') }}">
+    <span class="feature-kicker">Use case 2</span>
+    <h2>Passing Networks</h2>
+    <p>Aggregates pass events into player nodes and directed passing links for tactical structure.</p>
+  </a>
+  <a class="feature-card" href="{{ url_for('vision') }}">
+    <span class="feature-kicker">Use case 3</span>
+    <h2>YOLO Vision</h2>
+    <p>Uploads match clips and runs the optional YOLO/OpenCV analysis service when local dependencies are installed.</p>
+  </a>
+  <a class="feature-card" href="{{ url_for('architecture') }}">
+    <span class="feature-kicker">Use case 4</span>
+    <h2>Project Quality</h2>
+    <p>Documents run steps, Docker, tests, CI, architecture, issue workflow, and PR review expectations.</p>
+  </a>
+</section>
+{% endblock %}

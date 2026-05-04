@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Passing Network{% endblock %}
+{% block content %}
+<section class="split-layout wide">
+  <div>
+    <p class="eyebrow">Tactical visualization</p>
+    <h1>Team Passing Network</h1>
+    {% if error %}<p class="alert">{{ error }}</p>{% endif %}
+    <form class="panel" method="post" action="{{ url_for('passing_network_submit') }}">
+      <label>
+        Pass events JSON
+        <textarea name="passes" rows="12" spellcheck="false">[
+  {"passer":"GK","receiver":"LCB","start_x":8,"start_y":50,"end_x":24,"end_y":28},
+  {"passer":"LCB","receiver":"DM","start_x":24,"start_y":28,"end_x":42,"end_y":50},
+  {"passer":"DM","receiver":"AM","start_x":42,"start_y":50,"end_x":64,"end_y":50},
+  {"passer":"AM","receiver":"ST","start_x":64,"start_y":50,"end_x":84,"end_y":50}
+]</textarea>
+      </label>
+      <button class="primary-action" type="submit">Build network</button>
+    </form>
+  </div>
+
+  <aside class="panel">
+    <div class="pitch-network">
+      <svg viewBox="0 0 100 100" role="img" aria-label="Passing network pitch">
+        <rect x="3" y="5" width="94" height="90" rx="1"></rect>
+        <line x1="50" y1="5" x2="50" y2="95"></line>
+        <circle cx="50" cy="50" r="9"></circle>
+        {% for edge in network.edges %}
+          <line class="pass-line" x1="{{ edge.source_x }}" y1="{{ edge.source_y }}" x2="{{ edge.target_x }}" y2="{{ edge.target_y }}" style="stroke-width: {{ 0.6 + edge.count }};"></line>
+        {% endfor %}
+        {% for node in network.nodes %}
+          <circle class="network-node" cx="{{ node.x }}" cy="{{ node.y }}" r="{{ 2.7 + (node.touches / 3) }}"></circle>
+          <text x="{{ node.x }}" y="{{ node.y + 1 }}" text-anchor="middle">{{ node.player }}</text>
+        {% endfor %}
+      </svg>
+    </div>
+    <div class="metric-row">
+      <span>Total passes</span>
+      <strong>{{ network.total_passes }}</strong>
+    </div>
+    <h3>Strongest links</h3>
+    <ol class="score-list">
+      {% for edge in network.edges[:5] %}
+        <li><span>{{ edge.source }} -> {{ edge.target }}</span><strong>{{ edge.count }}</strong></li>
+      {% endfor %}
+    </ol>
+  </aside>
+</section>
+{% endblock %}

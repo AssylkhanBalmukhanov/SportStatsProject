@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}YOLO Vision{% endblock %}
+{% block content %}
+<section class="split-layout">
+  <div>
+    <p class="eyebrow">Computer vision</p>
+    <h1>YOLO Match Video Analysis</h1>
+    {% if error %}<p class="alert">{{ error }}</p>{% endif %}
+    <form class="panel" method="post" action="{{ url_for('vision_submit') }}" enctype="multipart/form-data">
+      <label>
+        Match video
+        <input type="file" name="video" accept=".mp4,.mov,.avi,.mkv,video/*">
+      </label>
+      <button class="primary-action" type="submit">Analyze video</button>
+    </form>
+  </div>
+
+  <aside class="panel result-panel">
+    {% if analysis %}
+      <p class="eyebrow">{{ analysis.status }}</p>
+      <h2>{{ analysis.message }}</h2>
+      <div class="metric-row">
+        <span>Frames processed</span>
+        <strong>{{ analysis.frames_processed }}</strong>
+      </div>
+      <div class="metric-row">
+        <span>Detections</span>
+        <strong>{{ analysis.detections }}</strong>
+      </div>
+      <div class="metric-row">
+        <span>Elapsed</span>
+        <strong>{{ analysis.elapsed_seconds }}s</strong>
+      </div>
+      {% if analysis.output_video %}
+        <video controls src="{{ url_for('static', filename=analysis.output_video) }}"></video>
+      {% endif %}
+    {% else %}
+      <p class="empty-state">Upload a short football clip. The service will use `YOLO_MODEL_PATH` when configured.</p>
+    {% endif %}
+  </aside>
+</section>
+{% endblock %}
