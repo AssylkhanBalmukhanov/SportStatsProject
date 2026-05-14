@@ -9,9 +9,13 @@ yolo_env
 venv
 .venv
 football_analysis/input_videos/*
+football_analysis/output_videos/*
+football_analysis/stubs/*
 static/uploads/*
 static/outputs/*
+models/*
 runs
+datasets
 *.pt
 *.onnx
 *.engine

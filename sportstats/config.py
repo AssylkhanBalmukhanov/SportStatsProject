@@ -7,20 +7,31 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def _bool_env(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
     MAX_CONTENT_LENGTH = int(os.getenv("MAX_CONTENT_LENGTH", str(250 * 1024 * 1024)))
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", str(BASE_DIR / "static" / "uploads"))
     OUTPUT_FOLDER = os.getenv("OUTPUT_FOLDER", str(BASE_DIR / "static" / "outputs"))
     ALLOWED_VIDEO_EXTENSIONS = {"mp4", "mov", "avi", "mkv"}
-    YOLO_MODEL_PATH = os.getenv("YOLO_MODEL_PATH", "")
-    VISION_MAX_FRAMES = int(os.getenv("VISION_MAX_FRAMES", "120"))
+    YOLO_MODEL_PATH = os.getenv("YOLO_MODEL_PATH", str(BASE_DIR / "models" / "best.pt"))
+    ALLOW_PRETRAINED_YOLO = _bool_env("ALLOW_PRETRAINED_YOLO", False)
+    VISION_MAX_FRAMES = int(os.getenv("VISION_MAX_FRAMES", "300"))
+    VISION_USE_STUBS = _bool_env("VISION_USE_STUBS", True)
+    VISION_STUB_DIR = os.getenv("VISION_STUB_DIR", str(BASE_DIR / "football_analysis" / "stubs"))
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 
 class TestConfig(Config):
     TESTING = True
-    WTF_CSRF_ENABLED = False
-    UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "/tmp/sportstats-test/uploads")
-    OUTPUT_FOLDER = os.getenv("OUTPUT_FOLDER", "/tmp/sportstats-test/outputs")
+    UPLOAD_FOLDER = "/tmp/sportstats-test/uploads"
+    OUTPUT_FOLDER = "/tmp/sportstats-test/outputs"
+    VISION_STUB_DIR = "/tmp/sportstats-test/stubs"
     VISION_MAX_FRAMES = 5
+    ALLOW_PRETRAINED_YOLO = False

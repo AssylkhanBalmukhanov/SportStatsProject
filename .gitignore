@@ -1,37 +1,45 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
+.ruff_cache/
 
 # Environments
-yolo_env/
 .env
-.venv
-env/
+.venv/
 venv/
+env/
+yolo_env/
 
-# Project Specific - Large Media
-football_analysis/input_videos/*
-football_analysis/output_videos/*
-!football_analysis/input_videos/.gitkeep
-!football_analysis/output_videos/.gitkeep
-
-# Weights and Models
-runs/
-*.pt
-*.onnx
-*.engine
-
-# Flask / Web
+# Flask/runtime
 instance/
 static/uploads/*
 static/outputs/*
 !static/uploads/.gitkeep
 !static/outputs/.gitkeep
-.webassets-cache
 
-# IDEs
+# Football analysis runtime assets
+football_analysis/input_videos/*
+football_analysis/output_videos/*
+football_analysis/stubs/*
+!football_analysis/input_videos/.gitkeep
+!football_analysis/output_videos/.gitkeep
+!football_analysis/stubs/.gitkeep
+
+# ML weights and experiment outputs
+models/*
+!models/.gitkeep
+runs/
+datasets/
+*.pt
+*.onnx
+*.engine
+*.torchscript
+
+# Local tooling
+.codex
+.agents/
 .vscode/
 .idea/
 .DS_Store
-.codex

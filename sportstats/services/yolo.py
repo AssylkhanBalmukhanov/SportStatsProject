@@ -1,21 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
 from pathlib import Path
-from time import perf_counter
 
-
-@dataclass(frozen=True)
-class VisionAnalysis:
-    status: str
-    message: str
-    frames_processed: int = 0
-    detections: int = 0
-    output_video: str | None = None
-    elapsed_seconds: float = 0.0
-
-    def to_dict(self) -> dict:
-        return asdict(self)
+from sportstats.vision import FootballAnalysisPipeline, FootballAnalysisResult, PipelineConfig
 
 
 def is_allowed_video(filename: str, allowed_extensions: set[str]) -> bool:
@@ -27,60 +14,61 @@ def analyze_video(
     *,
     output_dir: Path,
     model_path: str | None = None,
-    max_frames: int = 120,
-) -> VisionAnalysis:
+    max_frames: int | None = 300,
+    use_stubs: bool = True,
+    stub_dir: Path = Path("football_analysis/stubs"),
+    allow_pretrained: bool = False,
+) -> FootballAnalysisResult:
     if not video_path.exists():
-        return VisionAnalysis(status="error", message="Video file does not exist.")
+        return FootballAnalysisResult(status="error", message="Video file does not exist.")
 
-    try:
-        import cv2
-        from ultralytics import YOLO
-    except ImportError:
-        return VisionAnalysis(
+    resolved_model = _resolve_model_path(model_path, allow_pretrained=allow_pretrained)
+    if resolved_model is None:
+        return FootballAnalysisResult(
             status="unavailable",
-            message="Install opencv-python and ultralytics, then set YOLO_MODEL_PATH to enable video analysis.",
+            message="Add trained weights at models/best.pt or set YOLO_MODEL_PATH. Set ALLOW_PRETRAINED_YOLO=1 only for a COCO baseline demo.",
         )
 
-    output_dir.mkdir(parents=True, exist_ok=True)
-    model_name = model_path or "yolov8n.pt"
-    started_at = perf_counter()
-    model = YOLO(model_name)
-    capture = cv2.VideoCapture(str(video_path))
-    if not capture.isOpened():
-        return VisionAnalysis(status="error", message="OpenCV could not read the uploaded video.")
+    missing = _missing_optional_dependencies()
+    if missing:
+        return FootballAnalysisResult(
+            status="unavailable",
+            message=f"Install the vision dependencies first: {', '.join(missing)}.",
+        )
 
-    fps = capture.get(cv2.CAP_PROP_FPS) or 25.0
-    width = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    output_path = output_dir / f"{video_path.stem}_annotated.mp4"
-    writer = cv2.VideoWriter(
-        str(output_path),
-        cv2.VideoWriter_fourcc(*"mp4v"),
-        fps,
-        (width, height),
-    )
-
-    frames_processed = 0
-    detections = 0
     try:
-        while frames_processed < max_frames:
-            success, frame = capture.read()
-            if not success:
-                break
-            result = model(frame, verbose=False)[0]
-            detections += len(result.boxes)
-            writer.write(result.plot())
-            frames_processed += 1
-    finally:
-        capture.release()
-        writer.release()
+        pipeline = FootballAnalysisPipeline(
+            PipelineConfig(
+                model_path=resolved_model,
+                output_dir=output_dir,
+                max_frames=max_frames,
+                use_stubs=use_stubs,
+                stub_dir=stub_dir,
+            )
+        )
+        return pipeline.run(video_path)
+    except Exception as exc:  # pragma: no cover - exercised by real CV runtime
+        return FootballAnalysisResult(status="error", message=f"Video analysis failed: {exc}")
 
-    elapsed = perf_counter() - started_at
-    return VisionAnalysis(
-        status="complete",
-        message="Video analysis completed.",
-        frames_processed=frames_processed,
-        detections=detections,
-        output_video=f"outputs/{output_path.name}",
-        elapsed_seconds=round(elapsed, 2),
-    )
+
+def _missing_optional_dependencies() -> list[str]:
+    missing = []
+    for module_name, package_name in {"cv2": "opencv-python", "ultralytics": "ultralytics"}.items():
+        try:
+            __import__(module_name)
+        except ImportError:
+            missing.append(package_name)
+    return missing
+
+
+def _resolve_model_path(model_path: str | None, *, allow_pretrained: bool) -> str | None:
+    if model_path:
+        path = Path(model_path).expanduser()
+        if path.exists():
+            return str(path)
+    default_path = Path("models/best.pt")
+    if default_path.exists():
+        return str(default_path)
+    if allow_pretrained:
+        return "yolov8n.pt"
+    return None

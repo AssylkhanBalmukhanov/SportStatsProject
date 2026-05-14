@@ -34,7 +34,6 @@ def build_network(events: list[dict]) -> dict:
         receiver = _required_text(event, "receiver")
         start = (_required_number(event, "start_x"), _required_number(event, "start_y"))
         end = (_required_number(event, "end_x"), _required_number(event, "end_y"))
-
         player_positions[passer].append(start)
         player_positions[receiver].append(end)
         player_touches[passer] += 1
@@ -45,14 +44,7 @@ def build_network(events: list[dict]) -> dict:
     for player, positions in player_positions.items():
         avg_x = sum(position[0] for position in positions) / len(positions)
         avg_y = sum(position[1] for position in positions) / len(positions)
-        nodes.append(
-            {
-                "player": player,
-                "x": round(avg_x, 1),
-                "y": round(avg_y, 1),
-                "touches": player_touches[player],
-            }
-        )
+        nodes.append({"player": player, "x": round(avg_x, 1), "y": round(avg_y, 1), "touches": player_touches[player]})
 
     node_lookup = {node["player"]: node for node in nodes}
     edges = []

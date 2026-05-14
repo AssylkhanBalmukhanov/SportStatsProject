@@ -35,10 +35,7 @@
         {% endfor %}
       </svg>
     </div>
-    <div class="metric-row">
-      <span>Total passes</span>
-      <strong>{{ network.total_passes }}</strong>
-    </div>
+    <div class="metric-row"><span>Total passes</span><strong>{{ network.total_passes }}</strong></div>
     <h3>Strongest links</h3>
     <ol class="score-list">
       {% for edge in network.edges[:5] %}

@@ -28,10 +28,7 @@ def predict_match(
     return {
         "home_team": home.name,
         "away_team": away.name,
-        "expected_goals": {
-            "home": round(home_xg, 2),
-            "away": round(away_xg, 2),
-        },
+        "expected_goals": {"home": round(home_xg, 2), "away": round(away_xg, 2)},
         "probabilities": {
             "home_win": round(simulated["home_win"] / simulations, 4),
             "draw": round(simulated["draw"] / simulations, 4),
@@ -49,10 +46,9 @@ def expected_goals(home: TeamProfile, away: TeamProfile) -> tuple[float, float]:
 
     home_xg = league_home_goals * home.attack_strength / max(away.defense_strength, 0.2)
     away_xg = league_away_goals * away.attack_strength / max(home.defense_strength, 0.2)
+    bounded_elo = max(min(elo_adjustment, 0.35), -0.35)
 
-    home_xg *= 1.0 + max(min(elo_adjustment, 0.35), -0.35)
-    away_xg *= 1.0 - max(min(elo_adjustment, 0.35), -0.35)
-    return max(home_xg, 0.05), max(away_xg, 0.05)
+    return max(home_xg * (1.0 + bounded_elo), 0.05), max(away_xg * (1.0 - bounded_elo), 0.05)
 
 
 def _poisson_probability(mean: float, goals: int) -> float:
@@ -64,12 +60,7 @@ def _scoreline_probabilities(home_xg: float, away_xg: float, max_goals: int = 6)
     for home_goals in range(max_goals + 1):
         for away_goals in range(max_goals + 1):
             probability = _poisson_probability(home_xg, home_goals) * _poisson_probability(away_xg, away_goals)
-            scorelines.append(
-                {
-                    "score": f"{home_goals}-{away_goals}",
-                    "probability": round(probability, 4),
-                }
-            )
+            scorelines.append({"score": f"{home_goals}-{away_goals}", "probability": round(probability, 4)})
     return sorted(scorelines, key=lambda item: item["probability"], reverse=True)
 
 

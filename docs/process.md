@@ -2,6 +2,12 @@
 
 Use GitHub Issues as the source of truth. Every task should have an assignee, status, and acceptance criteria.
 
+## Branches
+
+- `main`: stable release branch.
+- `dev`: integration branch for reviewed work.
+- feature branches: one focused branch per issue.
+
 ## Suggested Board Columns
 
 - To Do
@@ -32,7 +38,9 @@ Each student should aim for:
 - Implement Poisson and Monte Carlo match predictor.
 - Add Elo calibration and sample football dataset adapter.
 - Implement pass-event upload and passing-network visualization.
-- Integrate YOLO model weights and annotated video export.
-- Add player speed, distance, and team color clustering to the CV pipeline.
+- Train YOLO football detector and commit model instructions.
+- Integrate YOLO tracking and annotated video export.
+- Add team-color assignment and ball-control statistics.
+- Add camera motion, perspective transform, speed, and distance metrics.
 - Add API/UI smoke tests for all demo workflows.
 - Prepare seminar demo script and screenshots.

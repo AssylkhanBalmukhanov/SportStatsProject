@@ -1,1 +1,1 @@
-"""Application service layer for analytics features."""
+"""Application service layer."""
