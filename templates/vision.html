@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}YOLO Vision{% endblock %}
+{% block content %}
+<section class="split-layout">
+  <div>
+    <p class="eyebrow">Computer vision</p>
+    <h1>YOLO Football Analysis</h1>
+    {% if error %}<p class="alert">{{ error }}</p>{% endif %}
+    <form class="panel" method="post" action="{{ url_for('vision_submit') }}" enctype="multipart/form-data">
+      <label>Match video <input type="file" name="video" accept=".mp4,.mov,.avi,.mkv,video/*"></label>
+      <button class="primary-action" type="submit">Analyze video</button>
+    </form>
+  </div>
+
+  <aside class="panel result-panel">
+    {% if analysis %}
+      <p class="eyebrow">{{ analysis.status }}</p>
+      <h2>{{ analysis.message }}</h2>
+      <div class="metric-row"><span>Frames processed</span><strong>{{ analysis.frames_processed }}</strong></div>
+      <div class="metric-row"><span>Player tracks</span><strong>{{ analysis.player_tracks }}</strong></div>
+      <div class="metric-row"><span>Referee tracks</span><strong>{{ analysis.referee_tracks }}</strong></div>
+      <div class="metric-row"><span>Ball detections</span><strong>{{ analysis.ball_detections }}</strong></div>
+      <div class="metric-row"><span>Team 1 control</span><strong>{{ analysis.team_1_ball_control }}%</strong></div>
+      <div class="metric-row"><span>Team 2 control</span><strong>{{ analysis.team_2_ball_control }}%</strong></div>
+      {% if analysis.output_video %}
+        <video controls src="{{ url_for('static', filename=analysis.output_video) }}"></video>
+      {% endif %}
+      {% if analysis.notes %}
+        <ul class="note-list">
+          {% for note in analysis.notes %}<li>{{ note }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+    {% else %}
+      <p class="empty-state">Upload a short football clip after placing trained weights at models/best.pt.</p>
+    {% endif %}
+  </aside>
+</section>
+{% endblock %}

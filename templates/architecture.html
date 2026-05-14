@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Architecture{% endblock %}
+{% block content %}
+<section class="content-stack">
+  <div>
+    <p class="eyebrow">System design</p>
+    <h1>Architecture and Responsibilities</h1>
+  </div>
+  <div class="diagram">
+    <div>Flask routes</div>
+    <span></span>
+    <div>Analytics services</div>
+    <span></span>
+    <div>Vision pipeline</div>
+  </div>
+  <section class="feature-grid">
+    <article class="feature-card"><span class="feature-kicker">Web layer</span><h2>sportstats.create_app</h2><p>Routes, uploads, request validation, logging, and template rendering.</p></article>
+    <article class="feature-card"><span class="feature-kicker">Stat models</span><h2>prediction.py</h2><p>Poisson expected goals and Monte Carlo match simulation.</p></article>
+    <article class="feature-card"><span class="feature-kicker">Event graphics</span><h2>passing_network.py</h2><p>Pass-event aggregation into graph nodes and weighted links.</p></article>
+    <article class="feature-card"><span class="feature-kicker">Computer vision</span><h2>sportstats.vision</h2><p>YOLO tracking, team assignment, ball control, optical flow, perspective transform, speed, and distance.</p></article>
+  </section>
+</section>
+{% endblock %}

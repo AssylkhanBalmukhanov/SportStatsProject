@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+
+# Environments
+.env
+.venv/
+venv/
+env/
+yolo_env/
+
+# Flask/runtime
+instance/
+static/uploads/*
+static/outputs/*
+!static/uploads/.gitkeep
+!static/outputs/.gitkeep
+
+# Football analysis runtime assets
+football_analysis/input_videos/*
+football_analysis/output_videos/*
+football_analysis/stubs/*
+!football_analysis/input_videos/.gitkeep
+!football_analysis/output_videos/.gitkeep
+!football_analysis/stubs/.gitkeep
+
+# ML weights and experiment outputs
+models/*
+!models/.gitkeep
+runs/
+datasets/
+*.pt
+*.onnx
+*.engine
+*.torchscript
+
+# Local tooling
+.codex
+.agents/
+.vscode/
+.idea/
+.DS_Store
