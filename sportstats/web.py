@@ -61,7 +61,7 @@ def create_app(config_object: type[Config] = Config) -> Flask:
                 render_template(
                     "passing_network.html",
                     network=build_demo_network(),
-                    error="Use a JSON array with passer, receiver, start_x, start_y, end_x and end_y fields.",
+                    error="Pass events need passer, receiver, start_x, start_y, end_x and end_y fields.",
                 ),
                 400,
             )
@@ -102,6 +102,10 @@ def create_app(config_object: type[Config] = Config) -> Flask:
     @app.get("/healthz")
     def healthz():
         return jsonify({"status": "ok", "service": "sportstats"})
+
+    @app.get("/favicon.ico")
+    def favicon():
+        return app.send_static_file("favicon.svg")
 
     @app.errorhandler(413)
     def file_too_large(_error):
