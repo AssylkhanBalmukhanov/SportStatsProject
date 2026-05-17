@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
+from uuid import uuid4
 
 from flask import Flask, jsonify, render_template, request
 from werkzeug.utils import secure_filename
@@ -79,7 +80,7 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         if not is_allowed_video(filename, app.config["ALLOWED_VIDEO_EXTENSIONS"]):
             return render_template("vision.html", analysis=None, error="Upload an MP4, MOV, AVI or MKV video."), 400
 
-        upload_path = Path(app.config["UPLOAD_FOLDER"]) / filename
+        upload_path = Path(app.config["UPLOAD_FOLDER"]) / _unique_upload_filename(filename)
         uploaded_file.save(upload_path)
         app.logger.info("Saved uploaded video to %s", upload_path)
 
@@ -143,3 +144,10 @@ def _configure_logging(app: Flask) -> None:
         level=app.config.get("LOG_LEVEL", "INFO"),
         format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
     )
+
+
+def _unique_upload_filename(filename: str) -> str:
+    path = Path(filename)
+    suffix = path.suffix.lower()
+    stem = secure_filename(path.stem) or "upload"
+    return f"{stem}_{uuid4().hex[:8]}{suffix}"

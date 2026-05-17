@@ -1,11 +1,15 @@
+import pickle
+from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 
 import numpy as np
 
 from sportstats.vision.ball_assignment import PlayerBallAssigner
+from sportstats.vision.camera_movement import _load_camera_stub
 from sportstats.vision.geometry import get_center_of_bbox, get_foot_position, measure_distance
 from sportstats.vision.team_assignment import kmeans
-from sportstats.vision.tracking import FootballTracker
+from sportstats.vision.tracking import FootballTracker, _load_tracks_stub
 
 
 class VisionHelpersTest(unittest.TestCase):
@@ -45,6 +49,25 @@ class VisionHelpersTest(unittest.TestCase):
 
         self.assertEqual(len(centroids), 2)
         self.assertEqual(set(labels.tolist()), {0, 1})
+
+    def test_track_stub_must_match_expected_frame_count(self):
+        tracks = {"players": [{}], "referees": [{}], "ball": [{}]}
+        with TemporaryDirectory() as directory:
+            stub_path = Path(directory) / "tracks.pkl"
+            with stub_path.open("wb") as handle:
+                pickle.dump(tracks, handle)
+
+            self.assertIsNotNone(_load_tracks_stub(stub_path, expected_frame_count=1))
+            self.assertIsNone(_load_tracks_stub(stub_path, expected_frame_count=2))
+
+    def test_camera_stub_must_match_expected_frame_count(self):
+        with TemporaryDirectory() as directory:
+            stub_path = Path(directory) / "camera.pkl"
+            with stub_path.open("wb") as handle:
+                pickle.dump([(0.0, 0.0)], handle)
+
+            self.assertIsNotNone(_load_camera_stub(stub_path, expected_frame_count=1))
+            self.assertIsNone(_load_camera_stub(stub_path, expected_frame_count=2))
 
 
 if __name__ == "__main__":

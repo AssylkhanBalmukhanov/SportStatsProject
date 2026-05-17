@@ -1,8 +1,10 @@
 from io import BytesIO
 import unittest
+from unittest.mock import patch
 
 from sportstats import create_app
 from sportstats.config import TestConfig
+from sportstats.vision.pipeline import FootballAnalysisResult
 
 
 class AppTest(unittest.TestCase):
@@ -40,6 +42,20 @@ class AppTest(unittest.TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertIn(b"Upload an MP4", response.data)
+
+    def test_vision_upload_uses_unique_runtime_filename(self):
+        result = FootballAnalysisResult(status="complete", message="done")
+        with patch("sportstats.web.analyze_video", return_value=result) as analyze:
+            response = self.client.post(
+                "/vision",
+                data={"video": (BytesIO(b"fake video"), "match.mp4")},
+                content_type="multipart/form-data",
+            )
+
+        self.assertEqual(response.status_code, 200)
+        saved_path = analyze.call_args.args[0]
+        self.assertRegex(saved_path.name, r"^match_[a-f0-9]{8}\.mp4$")
+        self.assertTrue(saved_path.exists())
 
 
 if __name__ == "__main__":

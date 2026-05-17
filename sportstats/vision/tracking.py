@@ -29,8 +29,9 @@ class FootballTracker:
         stub_path: Path | None = None,
     ) -> Tracks:
         if read_from_stub and stub_path and stub_path.exists():
-            with stub_path.open("rb") as handle:
-                return pickle.load(handle)
+            cached_tracks = _load_tracks_stub(stub_path, expected_frame_count=len(frames))
+            if cached_tracks is not None:
+                return cached_tracks
 
         tracks: Tracks = {"players": [], "referees": [], "ball": []}
         fallback_track_id = 10_000
@@ -168,3 +169,22 @@ def _class_to_category(class_name: str) -> str | None:
     if class_name in {"player", "goalkeeper", "person"}:
         return "players"
     return None
+
+
+def _load_tracks_stub(stub_path: Path, *, expected_frame_count: int) -> Tracks | None:
+    try:
+        with stub_path.open("rb") as handle:
+            tracks = pickle.load(handle)
+    except (EOFError, OSError, pickle.UnpicklingError, TypeError, ValueError):
+        return None
+    return tracks if _tracks_match_frame_count(tracks, expected_frame_count) else None
+
+
+def _tracks_match_frame_count(tracks: object, expected_frame_count: int) -> bool:
+    if not isinstance(tracks, dict):
+        return False
+    for key in ("players", "referees", "ball"):
+        value = tracks.get(key)
+        if not isinstance(value, list) or len(value) != expected_frame_count:
+            return False
+    return True
