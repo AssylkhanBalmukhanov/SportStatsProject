@@ -90,6 +90,17 @@ textarea { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace
   padding: 11px 16px;
 }
 .primary-action:hover { background: #12583f; }
+.primary-action:disabled { cursor: wait; opacity: 0.72; }
+.processing-state {
+  background: #eef5f0;
+  border: 1px solid #c8d8ce;
+  border-radius: 6px;
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 800;
+  margin: 0;
+  padding: 10px 12px;
+}
 .result-panel { min-height: 320px; }
 .vision-result h2 { margin-top: 10px; }
 .status-pill {

@@ -6,9 +6,10 @@
     <p class="eyebrow">Computer vision</p>
     <h1>YOLO Football Analysis</h1>
     {% if error %}<p class="alert">{{ error }}</p>{% endif %}
-    <form class="panel upload-panel" method="post" action="{{ url_for('vision_submit') }}" enctype="multipart/form-data">
+    <form class="panel upload-panel" method="post" action="{{ url_for('vision_submit') }}" enctype="multipart/form-data" data-processing-form>
       <label>Match video <input type="file" name="video" accept=".mp4,.mov,.avi,.mkv,video/*"></label>
-      <button class="primary-action" type="submit">Analyze video</button>
+      <button class="primary-action" type="submit" data-processing-button>Analyze video</button>
+      <p class="processing-state" data-processing-state hidden>Processing video. Keep this tab open.</p>
     </form>
   </div>
 
@@ -37,4 +38,20 @@
     {% endif %}
   </aside>
 </section>
+<script>
+  const processingForm = document.querySelector("[data-processing-form]");
+  if (processingForm) {
+    processingForm.addEventListener("submit", () => {
+      const button = processingForm.querySelector("[data-processing-button]");
+      const state = processingForm.querySelector("[data-processing-state]");
+      if (button) {
+        button.disabled = true;
+        button.textContent = "Processing...";
+      }
+      if (state) {
+        state.hidden = false;
+      }
+    });
+  }
+</script>
 {% endblock %}
