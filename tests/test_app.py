@@ -56,6 +56,24 @@ class AppTest(unittest.TestCase):
         saved_path = analyze.call_args.args[0]
         self.assertRegex(saved_path.name, r"^match_[a-f0-9]{8}\.mp4$")
         self.assertTrue(saved_path.exists())
+        self.assertEqual(analyze.call_args.kwargs["max_frames"], 5)
+
+    def test_vision_upload_can_process_full_video(self):
+        class FullVideoConfig(TestConfig):
+            VISION_MAX_FRAMES = None
+
+        app = create_app(FullVideoConfig)
+        client = app.test_client()
+        result = FootballAnalysisResult(status="complete", message="done")
+        with patch("sportstats.web.analyze_video", return_value=result) as analyze:
+            response = client.post(
+                "/vision",
+                data={"video": (BytesIO(b"fake video"), "full-match.mp4")},
+                content_type="multipart/form-data",
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(analyze.call_args.kwargs["max_frames"])
 
 
 if __name__ == "__main__":

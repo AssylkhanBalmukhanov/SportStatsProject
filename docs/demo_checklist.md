@@ -5,7 +5,7 @@
 - `models/best.pt` exists locally.
 - The sample video exists locally in `football_analysis/input_videos/`.
 - `python -m unittest discover` passes.
-- `python yolo_inference.py football_analysis/input_videos/08fd33_4.mp4 --model models/best.pt --max-frames 120` produces an output video.
+- `python yolo_inference.py football_analysis/input_videos/08fd33_4.mp4 --model models/best.pt` produces a full-length output video.
 - Flask starts with `flask --app app run --debug`.
 - GitHub PR shows CI passing.
 

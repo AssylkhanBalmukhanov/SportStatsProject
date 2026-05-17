@@ -10,6 +10,7 @@ from sportstats.vision.camera_movement import _load_camera_stub
 from sportstats.vision.geometry import get_center_of_bbox, get_foot_position, measure_distance
 from sportstats.vision.team_assignment import kmeans
 from sportstats.vision.tracking import FootballTracker, _load_tracks_stub
+from sportstats.vision.video import _encode_h264
 
 
 class VisionHelpersTest(unittest.TestCase):
@@ -68,6 +69,15 @@ class VisionHelpersTest(unittest.TestCase):
 
             self.assertIsNotNone(_load_camera_stub(stub_path, expected_frame_count=1))
             self.assertIsNone(_load_camera_stub(stub_path, expected_frame_count=2))
+
+    def test_h264_encoder_returns_false_when_input_is_missing(self):
+        with TemporaryDirectory() as directory:
+            output_path = Path(directory) / "out.mp4"
+
+            encoded = _encode_h264(Path(directory) / "missing.mp4", output_path)
+
+            self.assertFalse(encoded)
+            self.assertFalse(output_path.exists())
 
 
 if __name__ == "__main__":
