@@ -8,6 +8,7 @@ import numpy as np
 from sportstats.vision.ball_assignment import PlayerBallAssigner
 from sportstats.vision.camera_movement import _load_camera_stub
 from sportstats.vision.geometry import get_center_of_bbox, get_foot_position, measure_distance
+from sportstats.vision.pipeline import _frames_with_tracks
 from sportstats.vision.team_assignment import kmeans
 from sportstats.vision.tracking import FootballTracker, _load_tracks_stub
 from sportstats.vision.video import _encode_h264
@@ -32,6 +33,15 @@ class VisionHelpersTest(unittest.TestCase):
 
         self.assertEqual(interpolated[1][1]["bbox"], [10.0, 10.0, 20.0, 20.0])
         self.assertTrue(interpolated[1][1]["interpolated"])
+
+    def test_raw_ball_frames_are_counted_before_interpolation(self):
+        ball_positions = [
+            {1: {"bbox": [0, 0, 10, 10]}},
+            {},
+            {1: {"bbox": [20, 20, 30, 30]}},
+        ]
+
+        self.assertEqual(_frames_with_tracks(ball_positions), 2)
 
     def test_player_ball_assignment_uses_nearest_foot(self):
         players = {
