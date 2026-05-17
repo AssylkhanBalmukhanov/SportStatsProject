@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from sportstats.services.model_assets import DEFAULT_MODEL_URL
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -32,6 +34,7 @@ class Config:
     OUTPUT_FOLDER = os.getenv("OUTPUT_FOLDER", str(BASE_DIR / "static" / "outputs"))
     ALLOWED_VIDEO_EXTENSIONS = {"mp4", "mov", "avi", "mkv"}
     YOLO_MODEL_PATH = os.getenv("YOLO_MODEL_PATH", str(BASE_DIR / "models" / "best.pt"))
+    YOLO_MODEL_URL = os.getenv("YOLO_MODEL_URL", DEFAULT_MODEL_URL)
     ALLOW_PRETRAINED_YOLO = _bool_env("ALLOW_PRETRAINED_YOLO", False)
     VISION_MAX_FRAMES = _optional_positive_int_env("VISION_MAX_FRAMES")
     VISION_USE_STUBS = _bool_env("VISION_USE_STUBS", True)
@@ -44,5 +47,6 @@ class TestConfig(Config):
     UPLOAD_FOLDER = "/tmp/sportstats-test/uploads"
     OUTPUT_FOLDER = "/tmp/sportstats-test/outputs"
     VISION_STUB_DIR = "/tmp/sportstats-test/stubs"
+    YOLO_MODEL_URL = None
     VISION_MAX_FRAMES = 5
     ALLOW_PRETRAINED_YOLO = False

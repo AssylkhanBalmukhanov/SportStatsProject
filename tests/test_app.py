@@ -56,6 +56,7 @@ class AppTest(unittest.TestCase):
         saved_path = analyze.call_args.args[0]
         self.assertRegex(saved_path.name, r"^match_[a-f0-9]{8}\.mp4$")
         self.assertTrue(saved_path.exists())
+        self.assertIsNone(analyze.call_args.kwargs["model_url"])
         self.assertEqual(analyze.call_args.kwargs["max_frames"], 5)
 
     def test_vision_upload_can_process_full_video(self):
